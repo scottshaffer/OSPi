@@ -8,12 +8,14 @@ except ImportError:
         import Adafruit_BBIO.GPIO as GPIO # Required for accessing General Purpose Input Output pins on Beagle Bone Black
         gv.platform = 'bo'
     except ImportError:
+        gv.platform = '' # if no platform, allows program to still run.
         print 'No GPIO module was loaded from GPIO Pins module'
 
 try:
     GPIO.setwarnings(False)
+    GPIO.cleanup()
 except:
-    pass    
+    pass
 
   #### pin defines ####
 try:
@@ -31,19 +33,30 @@ try:
         pin_sr_noe = "P9_14"
         pin_sr_lat = "P9_12"
         pin_rain_sense = "P9_15"
-        pin_relay = "P9_16"   
+        pin_relay = "P9_16"
 except AttributeError:
     pass
 #### setup GPIO pins as output or input ####
 try:
-    GPIO.setup(pin_sr_clk, GPIO.OUT)
     GPIO.setup(pin_sr_noe, GPIO.OUT)
+    GPIO.output(pin_sr_noe, GPIO.HIGH)
+    GPIO.setup(pin_sr_clk, GPIO.OUT)
+    GPIO.output(pin_sr_clk, GPIO.LOW)
     GPIO.setup(pin_sr_dat, GPIO.OUT)
+    GPIO.output(pin_sr_dat, GPIO.LOW)
     GPIO.setup(pin_sr_lat, GPIO.OUT)
+    GPIO.output(pin_sr_lat, GPIO.LOW)
     GPIO.setup(pin_rain_sense, GPIO.IN)
     GPIO.setup(pin_relay, GPIO.OUT)
 except NameError:
     pass
+
+def disableShiftRegisterOutput():
+    """Disable output from shift register."""
+    try:
+        GPIO.output(pin_sr_noe, GPIO.HIGH)
+    except NameError:
+        pass
 
 def enableShiftRegisterOutput():
     """Enable output from shift register."""
@@ -51,15 +64,7 @@ def enableShiftRegisterOutput():
         GPIO.output(pin_sr_noe, GPIO.LOW)
     except NameError:
         pass
-     
- 
-def disableShiftRegisterOutput():
-    """Disable output from shift register."""
-    try:
-        GPIO.output(pin_sr_noe, GPIO.HIGH)
-    except NameError:
-        pass    
- 
+
 def setShiftRegister(srvals):
     """Set the state of each output pin on the shift register from the srvals list."""
     try:
@@ -74,11 +79,10 @@ def setShiftRegister(srvals):
             GPIO.output(pin_sr_clk, GPIO.HIGH)
         GPIO.output(pin_sr_lat, GPIO.HIGH)
     except NameError:
-        pass 
+        pass
 
 def set_output():
     """Activate triacs according to shift register state."""
-    if not gv.simulate:
-        disableShiftRegisterOutput()
-        setShiftRegister(gv.srvals) # gv.srvals stores shift register state
-        enableShiftRegisterOutput()
+    disableShiftRegisterOutput()
+    setShiftRegister(gv.srvals) # gv.srvals stores shift register state
+    enableShiftRegisterOutput()

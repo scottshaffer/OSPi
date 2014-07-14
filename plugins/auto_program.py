@@ -71,7 +71,7 @@ def runAutoProgram():
     except IOError:
         # if the data file doesn't exist, then create it with the blank data
         print "auto_program: no auto_settings.json file found, creating defaults"
-        data = json.loads(u'{"days": ["Mon"], "restrict": "none", "startTimeHour": 0, "startTimeMin": 0, "enabled": 0, "simulate": "0"}')
+        data = json.loads(u'{"days": ["Mon"], "restrict": "none", "startTimeHour": 0, "startTimeMin": 0, "enabled": 0}')
         data['daysWatched'] = 7
         if metrics==englishmetrics: data['metrics']="english"
         elif metrics==metricmetrics: data['metrics']="metric"
@@ -206,7 +206,7 @@ class auto_program:
     #        print data
         except IOError:
         # if the data file doesn't exist, then create it with the blank data
-            data = json.loads(u'{"days": ["Mon"], "restrict": "none", "startTimeHour": 0, "startTimeMin": 0, "enabled": 0, "simulate": "0"}')
+            data = json.loads(u'{"days": ["Mon"], "restrict": "none", "startTimeHour": 0, "startTimeMin": 0, "enabled": 0}')
             with io.open('./data/auto_settings.json', 'w', encoding='utf-8') as data_file:
                 data_file.write(unicode(json.dumps(data, ensure_ascii=False)))
 
@@ -231,7 +231,6 @@ class update_auto_program:
             data['startTimeHour']=qdict['startTimeHour']
             data['startTimeMin']=qdict['startTimeMin']
             data['restrict']=qdict['restrict']
-            data['simulate']=qdict['simulate']
             data['daysWatched'] = daysWatched
             data['metrics'] = metrics
             if qdict['enabled']=='1': data['enabled']= 1
@@ -242,9 +241,6 @@ class update_auto_program:
             with io.open('./data/auto_settings.json', 'w', encoding='utf-8') as data_file:
                 data_file.write(unicode(json.dumps(data, ensure_ascii=False)))
             data_file.close()
-            # if asked, turn on simulation mode which will stop all GPIO
-            if data['simulate']=='1': gv.simulate = True
-            else: gv.simulate = False
         except IOError:
             return
 
@@ -290,7 +286,7 @@ try:
     apdata_file.close()  
 except IOError:
 # if the data file doesn't exist, then create it with the blank data
-    apdata = json.loads(u'{"days": ["Mon"], "restrict": "none", "startTimeHour": 0, "startTimeMin": 0, "enabled": 0, "simulate": "0"}')
+    apdata = json.loads(u'{"days": ["Mon"], "restrict": "none", "startTimeHour": 0, "startTimeMin": 0, "enabled": 0}')
     apdata['daysWatched'] = 7
     if metrics==englishmetrics: apdata['metrics']="english"
     elif metrics==metricmetrics: apdata['metrics']="metric"

@@ -1,8 +1,14 @@
 web/
-sessions/
+/sessions/*
 /data/programs.json
 /data/sd.json
+/data/log.json
 /data/snames.txt
-/data/meta.txt
+/data/levels.json
+/data/weather_adj.json
+/data/auto_settings.json
+/data/wx_settings.json
+/data/zone_settings.json
 *.pyc
-/static/log/water_log.csv
+*.csv
+/python
