@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+ #### urls is used by web.py. When a GET request is received, the corresponding class is executed.
 urls = [
     '/',  'home',
     '/cv', 'change_values',
@@ -15,11 +16,15 @@ urls = [
     '/mp', 'modify_program',
     '/cp', 'change_program',
     '/dp', 'delete_program',
-    '/gp', 'graph_programs',
     '/vl', 'view_log',
     '/cl', 'clear_log',
     '/lo', 'log_options',
     '/rp', 'run_now',
     '/ttu', 'toggle_temp',
     '/rev', 'show_revision',
-    ]
+    '/wl', 'water_log',
+    '/api/status', 'api_status',
+    '/api/log', 'api_log',
+    '/login', 'login',
+    '/logout', 'logout'
+]
