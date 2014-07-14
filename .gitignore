@@ -6,6 +6,9 @@ web/
 /data/snames.txt
 /data/levels.json
 /data/weather_adj.json
+/data/auto_settings.json
+/data/wx_settings.json
+/data/zone_settings.json
 *.pyc
 *.csv
 /python
