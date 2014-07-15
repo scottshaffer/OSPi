@@ -47,6 +47,7 @@ except NameError:
     pass    
 
 urls.extend(['/auto', 'plugins.auto_program.auto_program', '/uap', 'plugins.auto_program.update_auto_program', '/rap', 'plugins.auto_program.start_auto_program']) # Add a new url to open the data entry page
+gv.plugin_menu.append(['Auto-Program', '/auto']) # Add this plugin to the home page plugins menu
     
 def runAutoProgram():
     global daysWatched
