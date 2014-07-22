@@ -33,7 +33,7 @@ def checkRain():
     return    
     
 @sched.cron_schedule(hour=1)
-def getDailyRainfall():
+def getDailyRainfall(force = False):
     #do we have yesterdays rainfall data already?
     t = datetime.date.today()
     print t, "Getting rainfall history..."
@@ -57,7 +57,7 @@ def getDailyRainfall():
     t = datetime.date.today()
     y = t-datetime.timedelta(days=1)
 
-    if str(y) not in data['rainfall']: 
+    if force or (str(y) not in data['rainfall']): 
         # if not, recreate past n days rainfall data
         for i in range(1,auto_program.daysWatched+1):
             d = datetime.date.today() - datetime.timedelta(days=i)
@@ -125,7 +125,9 @@ class update_wx_settings:
             elif qdict['metric']=='metric': auto_program.updateSettings(auto_program.metricmetrics, int(qdict['daysWatched']))
         except IOError:
             return
-
+        
+        getDailyRainfall(True)  # pull rainfall data again
+        
         raise web.seeother('/auto')
 
 ## Version that uses try/except to print an error message if the
@@ -148,6 +150,7 @@ def wget(url):
 def getWUHistoryRain(d, apikey, pws):
     # if we are using wunderground.com as a data source, then pull from their api using the configured key
     url = r'http://api.wunderground.com/api/'+str(apikey)+r'/history_'+ str(d) + r'/q/pws:' + pws + r'.json'
+    # print "getWUHistoryRain url=", url
     json_data = wget(url)
     if (json_data): data = json.load(json_data)
     else: return 0.0
