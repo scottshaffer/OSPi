@@ -257,22 +257,22 @@ def getZoneHistory(limit):
     zh = []
     for x in range(0, gv.sd['nbrd']*8): zh.append(0) # setup zone history list to have 0 in all locations
     try:
-        logf = open('static/log/water_log.csv')
+        logf = open('data/log.json')
         for line in logf:
-            log_line = line.strip().split(',') # parse log entry line
-            if log_line[0]=='Program': continue # skip first line
-            
+            event = json.loads(line) # parse log entry line
+
             #check date and break out if we're past our limit
-            end_date=log_line[5] # date program ended
-            delta = datetime.datetime.today()-datetime.datetime.strptime(end_date, " %a. %d %b %Y")
+            end_date=event["date"] # date program ended
+            delta = datetime.datetime.today()-datetime.datetime.strptime(end_date, "%Y-%m-%d")
             if delta.days > limit: break
-            z = int(log_line[1])-1 # zone number in log is 1-based
+            z = int(event["station"]) # station # (zero-based)
             if z>gv.sd['nbrd']*8: continue      # skip log entry if zone # is bigger than the number of zones we have
             # otherwise, pull out the run duration and modify the zone list to include the seconds of run time
-            m= re.search(r'(\d+)(?=m)', log_line[3])
-            s= re.search(r'(\d+)(?=s)', log_line[3])
-            if m: zh[z]+=int(m.group())*60
-            if s: zh[z]+=int(s.group())
+            dur = time.strptime(event["duration"],"%M:%S")
+            m= dur.tm_min
+            s= dur.tm_sec
+            if m: zh[z]+=int(m*60)
+            if s: zh[z]+=int(s)
         logf.close()
     except IOError:
         # return the list with all 0 - assume no usage

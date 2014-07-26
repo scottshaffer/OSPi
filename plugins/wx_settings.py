@@ -45,7 +45,7 @@ def getDailyRainfall(force = False):
 #        print data
     except IOError:
     # if the data file doesn't exist, then create it with the blank data
-        data = json.loads(u'{"wx": {"apikey": "1234", "useWU": 0, "pws":"KTXSPRIN55"}, "rainfall": {"2000-01-01": 0.0}, "startTimeHour": 0, "startTimeMin": 0, "enabled": 0}')
+        data = json.loads(u'{"wx": {"apikey": "1234", "useWU": 0, "pws":"<WUID>"}, "rainfall": {"2000-01-01": 0.0}, "startTimeHour": 0, "startTimeMin": 0, "enabled": 0}')
         for i in range(1,8):
             d = datetime.date.today() - datetime.timedelta(days=i)
             if data['wx']['useWU']:
@@ -84,7 +84,6 @@ class wx_settings:
     
     def GET(self):
         # start by setting up our json dictionary with blank weather data
-        #data = json.loads(u'{"wx": {"apikey": "1234", "useWU": 0, "pws":"KTXSPRIN55"}, "rainfall": {"2000-01-01": 0.0}}')
         try:
             # read wx settings from the file, if it exists
             with io.open(r'./data/wx_settings.json', 'r') as data_file: 
@@ -108,8 +107,6 @@ class update_wx_settings:
         qdict=web.input()
         #print "update_wx_settings:", int(qdict['daysWatched']), qdict['metric']
         try:
-            #write file back out with updated data
-            #data = json.loads(u'{"wx": {"apikey": "1234", "useWU": 0, "pws": "KTXSPRING55"}, "rainfall": {"05/01/14": 0.0}}')
             # read wx settings from the file, if it exists, that way we keep field settings even if WU use is disabled
             with io.open(r'./data/wx_settings.json', 'r') as data_file: 
                 data = json.load(data_file)
