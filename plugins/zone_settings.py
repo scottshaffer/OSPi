@@ -21,7 +21,7 @@ class zone_settings:
     def GET(self):
         # start by setting up our json dictionary with blank station data
         # if we ever see 'bad station' we know there was an error somewhere
-        data = json.loads(u'{"station": [{"auto": 0, "Pr": 0.0, "ET": 0.0, "type": "rotor", "max": 0.0, "name": "bad station"}], "station_count": 1}')
+        data = json.loads(u'{"station": [{"auto": 0, "Pr": 0.0, "ET": 0.0, "type": "rotor", "max": 0.0, "name": "bad station", "show": 1}], "station_count": 1}')
         try:
             # read station settings from the file, if it exists
             with io.open(r'./data/zone_settings.json', 'r') as data_file: # read zone data
@@ -32,6 +32,8 @@ class zone_settings:
             station_names = zone_names(gv.snames)
             for i in range(0,data['station_count']):
                 data['station'][i]['name']=station_names[i]
+                bid = int(i / 8)
+                data['station'][i]['show']=(gv.sd['show'][bid]>>(i%8))&1
             
             # has the number of expansion boards changed, and thus the number of stations changed?
             # Note: this doesn't seem well written - I feel there is some way to integrate setting the names with 
@@ -40,7 +42,8 @@ class zone_settings:
             if diff>0:
             # we need to add stations from data dictionary
                 for i in range(0,diff):
-                    dict = {"auto": 0, "Pr": 0.0, "ET": 0.0, "max": 0.0, "type": "rotor", "name": station_names[i+data['station_count']]}
+                    bid = int(i / 8)
+                    dict = {"auto": 0, "Pr": 0.0, "ET": 0.0, "max": 0.0, "type": "rotor", "show": (gv.sd['show'][bid]>>(i%8))&1, "name": station_names[i+data['station_count']]}
                     data['station'].append(dict)
             elif diff<0:
             # we need to remove stations from data dictionary
@@ -53,11 +56,12 @@ class zone_settings:
             station_names = zone_names(gv.snames)
             data['station_count']=gv.sd['nbrd']*8
             data['station'][0]['name']=station_names[0]
+            data['station'][0]['show']=gv.sd['show'][0]&1
             # current station names are written to the file but not used when read in (instead they are updated from the global variable)
             # an optimization could to remove station names to save disk space and memory
             for i in range(1,data['station_count']):
-                dict = {"auto": 0, "Pr": 0.0, "ET": 0.0, "max": 0.0, "type": "rotor", "name": station_names[i]}
-                #print "dict=",i,dict
+                bid = int(i / 8)
+                dict = {"auto": 0, "Pr": 0.0, "ET": 0.0, "max": 0.0, "type": "rotor", "show": (gv.sd['show'][bid]>>(i%8))&1, "name": station_names[i]}
                 data['station'].append(dict)
             #print "data=", data['station']
             with io.open('./data/zone_settings.json', 'w', encoding='utf-8') as data_file:
@@ -97,6 +101,8 @@ class update_zone_settings:
             for i in range(0,data['station_count']):
                 if ('auto'+str(i)) in qdict: data['station'][i]['auto']=qdict["auto"+str(i)]
                 else: data['station'][i]['auto']=0
+                if (gv.sd['show'][int(i/8)]>>(i%8))&1==0: continue
+                else: data['station'][i]['show']=1
                 data['station'][i]['ET']=qdict["ET"+str(i)]
                 data['station'][i]['Pr']=qdict["Pr"+str(i)]
                 data['station'][i]['max']=qdict["max"+str(i)]
