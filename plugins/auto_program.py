@@ -112,7 +112,7 @@ def runAutoProgram():
 
     # do we water today?
     if data['restrict'] != 'none':
-        if (t.day()%2)==0:
+        if (t.day%2)==0:
         # even day
             if data['odd']: return
             elif data['even']: return
