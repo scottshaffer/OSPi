@@ -112,10 +112,11 @@ def runAutoProgram():
 
     # do we water today?
     if data['restrict'] != 'none':
-        if (t.day%2)==0:
-        # even day
-            if data['odd']: return
-            elif data['even']: return
+        # honor odd/even day restriction
+        if (t.day%2)==0: # check if today is even or odd day
+            # if (even day) then
+            if data['restrict']=='odd': return # skip if we're programmed for odd days only
+        elif data['restrict']=='even': return # skip if we're set for even days only
     if not t.strftime("%a") in data['days']: return
 
 #    if t.strftime("%a") == "Mon": days[0] |= 1
