@@ -147,7 +147,9 @@ def runAutoProgram():
                 # Pr = in/hour; zone_history = time in seconds zone was on last 7 days
                 # Pr / 60 = in/minute; zone_history/60 = time in minutes
                 # water_placed  = (Pr/60 in/min) * (history/60 in/min) + rainfall_total (as long as rainfall doesn't exceed the runoff limit!)
-                water_placed = ((float(zonedata['station'][z]['Pr'])/60) * (zone_history[z]/60)) + min(rainfall_total, zonedata['station'][z]['max'])
+                if zonedata['station'][z]['type']=='drip': adj_rain = rainfall_total * 0.623
+                else: adj_rain = rainfall_total
+                water_placed = ((float(zonedata['station'][z]['Pr'])/60) * (zone_history[z]/60)) + min(adj_rain, zonedata['station'][z]['max'])
                 #print "ap - zone", str(z)," water_placed = ", water_placed
                 # print "auto_program: ", z, water_placed, "in placed", zonedata['station'][z]['ET'], 'in needed per week'
                 if water_placed > float(zonedata['station'][z]['ET']): continue     # zone has enough water, so skip

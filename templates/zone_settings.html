@@ -164,9 +164,13 @@ $def with(data, zone_history, rainfall_total, metrics, daysWatched, gv)
 				$if data['station'][x]['type']=='drip': $metrics[3]
 				$else:$metrics[2]
 				</td>
+				$if data['station'][x]['type']=='drip':
+					$ adj_rain = rainfall_total * 0.623
+				$else:
+					$ adj_rain = rainfall_total
 				$ water_placed = ((float(data['station'][x]['Pr'])/60)*(zone_history[x]/60))
 				$ buf='%.2f ' % water_placed
-				$ water_needed = (float(data['station'][x]['ET'])-((float(data['station'][x]['Pr'])/60)*(zone_history[x]/60)))-rainfall_total
+				$ water_needed = (float(data['station'][x]['ET'])-((float(data['station'][x]['Pr'])/60)*(zone_history[x]/60)))-adj_rain
 				$if (water_needed<0): $ water_needed=0
 				$ buf2='%.2f ' % water_needed
 				$ water_allowed = min(water_needed,float(data['station'][x]['max']))
