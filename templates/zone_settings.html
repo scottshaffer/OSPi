@@ -1,9 +1,9 @@
-$def with(data, zone_history, rainfall_total, metrics, daysWatched)
-
+$def with(data, zone_history, rainfall_total, metrics, daysWatched, gv)
 <!DOCTYPE html>
 <html>
-</script>
 	<head>
+<script src="${gv.baseurl}/static/scripts/jquery-1.8.2.min.js"></script>
+
 		<title>Zone Settings</title>
 		<style>
 			table {
@@ -95,8 +95,37 @@ $def with(data, zone_history, rainfall_total, metrics, daysWatched)
 				padding: 2px 6px;
 			}			
 		</style>
+
+<script>
+	jQuery(document).ready(function(){
+		jQuery("input:radio").change(function() {
+			if (jQuery(this).val()=="drip") {
+				var iStr = jQuery(this).parent().next().text();  // get associated Input:Text HTML
+				//alert(iStr);
+				jQuery(this).parent().next().html(jQuery(this).parent().next().html().replace(iStr," $metrics[1]"));
+				var p1 = jQuery(this).parent().next();
+				iStr = jQuery(p1).next().text();
+				jQuery(p1).next().html(jQuery(p1).next().html().replace(iStr," $metrics[3]"));
+				var p2 = jQuery(p1).next();
+				iStr = jQuery(p2).next().text();
+				jQuery(p2).next().html(jQuery(p2).next().html().replace(iStr," $metrics[3]"));
+			} else {
+				var iStr = jQuery(this).parent().next().text();  // get associated Input:Text HTML
+				jQuery(this).parent().next().html(jQuery(this).parent().next().html().replace(iStr," $metrics[0]"));
+				var p1 = jQuery(this).parent().next();
+				iStr = jQuery(p1).next().text();
+				jQuery(p1).next().html(jQuery(p1).next().html().replace(iStr," $metrics[2]"));
+				var p2 = jQuery(p1).next();
+				iStr = jQuery(p2).next().text();
+				jQuery(p2).next().html(jQuery(p2).next().html().replace(iStr," $metrics[2]"));
+
+			}
+		});
+	});
+</script>
+
 	</head>
-	<body onload="javascript:active();">
+	<body>
 	<img src="./static/images/misc/ospi-auto.png"><br />
 	<button class="menu" onclick=window.location="/auto";><img height=20 align=absmiddle src="./static/images/icons/svc_back.png" /> Auto-Program Home</button>
 	<button class="menu" onclick=window.location="/wx";><img height=20 align=absmiddle src="./static/images/icons/svc_rain.png" /> Weather Data Settings</button>
@@ -108,27 +137,33 @@ $def with(data, zone_history, rainfall_total, metrics, daysWatched)
 			<table>
 			<tr><th colspan=7></th><th colspan=5>$daysWatched D A Y &nbsp;  H I S T O R Y</th></tr>
 			<tr><th>#</th><th width=300>Station Name</th><th>Automated</th><th>Irrigation Type</th><th>Precipitation Rate</th>
-			<th>Water Needed<br />(per $daysWatched days)</th><th>Max water before runoff</th><th>Run Time<br />(minutes)</th><th>Amount Irrigated<br />($metrics[2])</th>
-			<th>Amount Needed<br />($metrics[2])</td><th>Duration Needed<br />(minutes)</th><th>Duration next run<br />(minutes)</th></tr>
+			<th>Water Needed<br />(per $daysWatched days)</th><th>Max water before runoff</th><th>Run Time<br />(minutes)</th><th>Amount Irrigated</th>
+			<th>Amount Needed</td><th>Duration Needed<br />(minutes)</th><th>Duration next run<br />(minutes)</th></tr>
 			$for x in range(0,data['station_count']):
 				$if data['station'][x]['show']==0: $continue
 				<tr><td style="width: 20px;">$(x+1)</td><td width=300><label for="s$x">$data['station'][x]['name']</label></td>
 				<td style="width: 100px;"><input type="checkbox" id="check$x" name="auto$x" 
 				$if data['station'][x]['auto']: checked
 				/></td>
-				<td><input type="radio" id="radio1$x" name="type$x" value="rotor" 
+				<td><input type="radio" class="rg" id="radio1$x" name="type$x" value="rotor" 
 				$if data['station'][x]['type']=='rotor':checked
-				><label for="radio1$x">Rotor</label><input type="radio" id="radio2$x" name="type$x" value="spray" 
+				><label for="radio1$x">Rotor</label><input type="radio" class="rg" id="radio2$x" name="type$x" value="spray"  
 				$if data['station'][x]['type']=='spray':checked
-				><label for="radio2$x">Spray</label><input type="radio" id="radio3$x" name="type$x" value="drip" disabled 
+				><label for="radio2$x">Spray</label><input type="radio" class="rg" id="radio3$x" name="type$x" value="drip"  
 				$if data['station'][x]['type']=='drip':checked
 				><label for="radio3$x">Drip</label></td>
 				<td><input type="text" name="Pr$x" value=$data['station'][x]['Pr']>
 				$if data['station'][x]['type']=='drip': $metrics[1]
 				$else:$metrics[0]
 				</td>
-				<td><input type="text" name="ET$x" value=$data['station'][x]['ET']> $metrics[2]</td>
-				<td><input type="text" name="max$x" value=$data['station'][x]['max']> $metrics[2]</td>
+				<td><input type="text" name="ET$x" value=$data['station'][x]['ET']>
+				$if data['station'][x]['type']=='drip': $metrics[3]
+				$else:$metrics[2]
+				</td>
+				<td><input type="text" name="max$x" value=$data['station'][x]['max']>
+				$if data['station'][x]['type']=='drip': $metrics[3]
+				$else:$metrics[2]
+				</td>
 				$ water_placed = ((float(data['station'][x]['Pr'])/60)*(zone_history[x]/60))
 				$ buf='%.2f ' % water_placed
 				$ water_needed = (float(data['station'][x]['ET'])-((float(data['station'][x]['Pr'])/60)*(zone_history[x]/60)))-rainfall_total

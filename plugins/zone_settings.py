@@ -21,6 +21,7 @@ class zone_settings:
     def GET(self):
         # start by setting up our json dictionary with blank station data
         # if we ever see 'bad station' we know there was an error somewhere
+        gv.baseurl = web.ctx['home']
         data = json.loads(u'{"station": [{"auto": 0, "Pr": 0.0, "ET": 0.0, "type": "rotor", "max": 0.0, "name": "bad station", "show": 1}], "station_count": 1}')
         try:
             # read station settings from the file, if it exists
@@ -85,7 +86,7 @@ class zone_settings:
         # if no rainfall total, skip and keep going (assuming 0 rainfall)
             "ERROR: auto_program: unable to access wx_settings.json file"
             pass        
-        return self.render.zone_settings(data,zone_history, rainfall_total, auto_program.metrics, auto_program.daysWatched)
+        return self.render.zone_settings(data, zone_history, rainfall_total, auto_program.metrics, auto_program.daysWatched, gv)
 
 class update_zone_settings:
     """Save user input to zone_settings.json file """

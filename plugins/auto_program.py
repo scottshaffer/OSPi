@@ -18,8 +18,8 @@ RS_PROGID   = 3
 PS_PROGID   = 0
 PS_DURATION = 1
 
-englishmetrics=['in/hr', 'gal/hr', 'inches']
-metricmetrics=['mm/hr', 'l/hr', 'mm']
+englishmetrics=['in/hr', 'gal/hr', 'inches', 'gallons']
+metricmetrics=['mm/hr', 'l/hr', 'mm', 'liters']
 
 # global variables #
 auto_job = 0        # cron job that executes daily
