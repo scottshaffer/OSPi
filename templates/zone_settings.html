@@ -137,7 +137,7 @@ $def with(data, zone_history, rainfall_total, metrics, daysWatched, gv)
 			<table>
 			<tr><th colspan=7></th><th colspan=5>$daysWatched D A Y &nbsp;  H I S T O R Y</th></tr>
 			<tr><th>#</th><th width=300>Station Name</th><th>Automated</th><th>Irrigation Type</th><th>Precipitation Rate</th>
-			<th>Water Needed<br />(per $daysWatched days)</th><th>Max water before runoff</th><th>Run Time<br />(minutes)</th><th>Amount Irrigated</th>
+			<th>Water Needed<br />(per $daysWatched days)</th><th>Max water before runoff</th><th>Run Time<br />(minutes)</th><th>Rainfall</th><th>Amount Irrigated</th>
 			<th>Amount Needed</td><th>Duration Needed<br />(minutes)</th><th>Duration next run<br />(minutes)</th></tr>
 			$for x in range(0,data['station_count']):
 				$if data['station'][x]['show']==0: $continue
@@ -182,7 +182,8 @@ $def with(data, zone_history, rainfall_total, metrics, daysWatched, gv)
 					$ dur_next = 0
 				$ buf3='%.2f' % duration
 				$ buf4='%.2f' % dur_next
-				<td>$(zone_history[x]/60)</td><td>$buf</td><td>$buf2</td><td>$buf3</td><td>$buf4</td>
+				$ buf_adj_rain = '%.2f' % adj_rain
+				<td>$(zone_history[x]/60)</td><td>$buf_adj_rain</td><td>$buf</td><td>$buf2</td><td>$buf3</td><td>$buf4</td>
 				</tr>
 			<tr><td colspan=5><button class="submit" type="submit">Submit Settings</button></td></tr>
 			</table>

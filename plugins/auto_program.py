@@ -260,7 +260,7 @@ def getZoneHistory(limit):
     zh = []
     for x in range(0, gv.sd['nbrd']*8): zh.append(0) # setup zone history list to have 0 in all locations
     try:
-        logf = open('data/log.json')
+        logf = open('data/log.json') 
         for line in logf:
             event = json.loads(line) # parse log entry line
 
@@ -271,11 +271,10 @@ def getZoneHistory(limit):
             z = int(event["station"]) # station # (zero-based)
             if z>gv.sd['nbrd']*8: continue      # skip log entry if zone # is bigger than the number of zones we have
             # otherwise, pull out the run duration and modify the zone list to include the seconds of run time
-            dur = time.strptime(event["duration"],"%M:%S")
-            m= dur.tm_min
-            s= dur.tm_sec
-            if m: zh[z]+=int(m*60)
-            if s: zh[z]+=int(s)
+            m = re.search('(\d+):\d+', event["duration"])
+            s = re.search('\d+:(\d+)', event["duration"])
+            if m: zh[z]+=int(int(m.group(1))*60)
+            if s: zh[z]+=int(int(s.group(1)))
         logf.close()
     except IOError:
         # return the list with all 0 - assume no usage
