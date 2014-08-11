@@ -162,8 +162,8 @@ def runAutoProgram():
                 else:
                     duration = 0
                 #print "ap zone", str(z)," needs ", water_needed, " - duration ", duration,"s"
-                if duration < MIN_DURATION: continue            # don't water too little
-                duration *= gv.sd['wl']/100                     # modify duration by water level if set
+                if duration < MIN_DURATION: continue             # don't water too little
+                duration *= float(gv.sd['wl'])/100                     # modify duration by water level if set
                 if gv.sd['seq']: # sequential mode
                     gv.rs[z][RS_STARTTIME] = accumulate_time
                     gv.rs[z][RS_DURATION] = int(duration)   # store duration scaled by water level
