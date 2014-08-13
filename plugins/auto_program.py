@@ -157,13 +157,14 @@ def runAutoProgram():
                 # cap water_needed at max before runoff
                 if water_needed>float(zonedata['station'][z]['max']): water_needed = float(zonedata['station'][z]['max'])
                 if water_needed<0: water_needed = 0
+                water_needed *= float(gv.sd['wl'])/100                     # modify duration by water level if set
                 if float(zonedata['station'][z]['Pr']):           # if Pr set, then use it
                     duration = (water_needed / float(zonedata['station'][z]['Pr'])) * 3600 # (in_needed / in/hour) * 3600 = duration in seconds
                 else:
                     duration = 0
                 #print "ap zone", str(z)," needs ", water_needed, " - duration ", duration,"s"
                 if duration < MIN_DURATION: continue             # don't water too little
-                duration *= float(gv.sd['wl'])/100                     # modify duration by water level if set
+                # duration *= float(gv.sd['wl'])/100                     # modify duration by water level if set
                 if gv.sd['seq']: # sequential mode
                     gv.rs[z][RS_STARTTIME] = accumulate_time
                     gv.rs[z][RS_DURATION] = int(duration)   # store duration scaled by water level

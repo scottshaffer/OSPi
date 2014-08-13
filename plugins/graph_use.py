@@ -15,6 +15,8 @@ auto_job = 0        # cron job that executes daily
 daysWatched = 7     # number of days to consider when calculating water usage and rainfall data
 metrics=englishmetrics
 
+# zone history by date - a data structure
+# { "date": <date>, [z0: inch, z1: inch, etc.] } 
 # allows other modules to update settings
 def updateSettings(m, d):
     global daysWatched
@@ -34,14 +36,13 @@ class graph_use:
         self.render = web.template.render('templates/', globals={'json':json,'sorted':sorted})
     
     def GET(self):
-        zh = getZoneHistory(daysWatched)
+        zh = getZoneHistoryByDate(daysWatched)
         
-        return self.render.auto_program(data)
+        return self.render.graph_use(zh)
 
-
-def getZoneHistory(limit):
+def getZoneHistoryByDate(limit):
     zh = []
-    for x in range(0, gv.sd['nbrd']*8): zh.append(0) # setup zone history list to have 0 in all locations
+    
     try:
         logf = open('data/log.json') 
         for line in logf:
@@ -51,6 +52,7 @@ def getZoneHistory(limit):
             end_date=event["date"] # date program ended
             delta = datetime.datetime.today()-datetime.datetime.strptime(end_date, "%Y-%m-%d")
             if delta.days > limit: break
+            zh.append({"date": end_date, 
             z = int(event["station"]) # station # (zero-based)
             if z>gv.sd['nbrd']*8: continue      # skip log entry if zone # is bigger than the number of zones we have
             # otherwise, pull out the run duration and modify the zone list to include the seconds of run time

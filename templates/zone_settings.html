@@ -159,6 +159,8 @@ $def with(data, zone_history, rainfall_total, metrics, daysWatched, gv)
 				<td><input type="text" name="ET$x" value=$data['station'][x]['ET']>
 				$if data['station'][x]['type']=='drip': $metrics[3]
 				$else:$metrics[2]
+				$ buf_wl =  '%.2f' % (float(gv.sd["wl"])/100)
+				x $buf_wl adjust
 				</td>
 				<td><input type="text" name="max$x" value=$data['station'][x]['max']>
 				$if data['station'][x]['type']=='drip': $metrics[3]
@@ -172,6 +174,7 @@ $def with(data, zone_history, rainfall_total, metrics, daysWatched, gv)
 				$ buf='%.2f ' % water_placed
 				$ water_needed = (float(data['station'][x]['ET'])-((float(data['station'][x]['Pr'])/60)*(zone_history[x]/60)))-adj_rain
 				$if (water_needed<0): $ water_needed=0
+				$ water_needed *= float(gv.sd['wl'])/100
 				$ buf2='%.2f ' % water_needed
 				$ water_allowed = min(water_needed,float(data['station'][x]['max']))
 				$if float(data['station'][x]['Pr']):
