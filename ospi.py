@@ -24,7 +24,7 @@ from hashlib import sha1
 #### Revision information ####
 gv.ver = 203
 gv.rev = 'XXX'
-gv.rev_date = '13/July/2014'
+gv.rev_date = '23/August/2014'
 
 #!!! Note: This add-on feature is now deprecated. Code is left in place for backward compatibility.
 ################################################################
@@ -852,11 +852,11 @@ class change_program:
             for i in range(len(gv.rs)):
                 if gv.rs[i][3] == pnum:
                     gv.rs[i] = [0,0,0,0]
-        if cp[1] >= 128 and cp[2] > 1:
+        if cp[1] >= 128 and cp[2] > 1: # Interval program
             dse = int(gv.now/86400)
             ref = dse + cp[1]-128
             cp[1] = (ref%cp[2])+128
-        elif qdict['pid'] == '-1': #add new program
+        if str(qdict['pid']) == '-1': #add new program
             gv.pd.append(cp)
         else:
             gv.pd[int(qdict['pid'])] = cp #replace program
@@ -878,17 +878,18 @@ class delete_program:
         jsave(gv.pd, 'programs')
         gv.sd['nprogs'] = len(gv.pd)
         raise web.seeother('/vp')
-        return
+
                           
 class enable_program:
     """Activate an existing program(s)."""
     def GET(self):
         verifyLogin()
         qdict = web.input()
+        print 'qdict', qdict
         gv.pd[int(qdict['pid'])][0] = int(qdict['enable'])
         jsave(gv.pd, 'programs')
         raise web.seeother('/vp')
-        return
+
                           
 class view_log:
     """View Log"""
